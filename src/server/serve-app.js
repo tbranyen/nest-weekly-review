@@ -1,17 +1,13 @@
 'use strict';
 
 var fs = require('fs');
-var src;
-
-try {
-  src = fs.readFileSync('./app-production.js', { encoding: 'utf-8' });
-} catch(err) {
-  throw new Error(
-    'Unable to read production build of application. Please run `npm run ' +
-    'build`.'
-  );
-}
+var filePath = __dirname + '/../../app-production.js';
 
 module.exports = function(req, res) {
-  res.send(src);
+  fs.createReadStream(filePath).on('error', function() {
+    throw new Error(
+      'Unable to read production build of application. Please run `npm run ' +
+      'build`.'
+    );
+  }).pipe(res);
 };
